@@ -1,5 +1,6 @@
 import logging
 import telegram
+import os
 
 from telegram.ext import (
     Updater,
@@ -60,7 +61,7 @@ def anonymous_suggestion(update, context):
     )
 
     msg = "Sugerencia enviada anónimamente:\n" + msg
-    context.bot.send_message(chat_id=TEACHER_CHAT_ID, text=msg)
+    context.bot.send_message(chat_id=os.environ['TEACHER_CHAT_ID'], text=msg)
 
     return ConversationHandler.END
 
@@ -75,7 +76,7 @@ def identifiable_suggestion(update, context):
     user = update.message.from_user
     attendant = f"{user.first_name} {user.last_name} (@{user.username})"
     msg = f"Sugerencia enviada por {attendant}:\n" + msg
-    context.bot.send_message(chat_id=TEACHER_CHAT_ID, text=msg)
+    context.bot.send_message(chat_id=os.environ['TEACHER_CHAT_ID'], text=msg)
 
     return ConversationHandler.END
 
@@ -90,7 +91,7 @@ def cancel(update, context):
 
 
 def main():
-    updater = Updater(token=cfg.BOT_API_TOKEN,
+    updater = Updater(token=os.environ['BOT_API_TOKEN'],
                       use_context=True)
 
     dispatcher = updater.dispatcher
