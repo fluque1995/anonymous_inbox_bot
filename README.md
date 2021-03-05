@@ -50,4 +50,37 @@ In order to create a new bot, you have to talk to the BotFather.  You
 can start a conversation with him [here](https://t.me/BotFather).
 Creating a new bot using the BotFather is pretty straightforward, you
 can find more information in this link:
-(https://core.telegram.org/bots#6-botfather)
+https://core.telegram.org/bots#6-botfather
+
+After creating you bot, BotFather should give you the `API_TOKEN` of
+your bot. This token is a huge alphanumerical code that identifies
+your bot with Telegram. Store this key in a safe place, and be careful
+not to give it to anybody, since they can take control of your bot
+using it.  The `API_TOKEN` is something similar to this:
+
+``` shell
+1234567890:aaaaaaaaaaaaaaaaaaaaaa_aaaaaaaaaaa
+```
+
+## Getting your contact information
+
+In order to get your contact information, specifically your chat ID,
+you have to talk to [@userinfobot](https://t.me/userinfobot). This
+number is the identifier or your account, so again be careful not
+to show it publicly, or your account can be easily spammed. From
+now on, we will refer to this number as `TEACHER_CHAT_ID`, since
+it is the name we will give to the variable in our code.
+
+After getting this two descriptors, `TOKEN_ID` and `TEACHER_CHAT_ID`,
+we are ready to deploy the bot in Google Cloud Run.
+
+## Getting an account in Google Cloud Run
+
+__Disclaimer__: The next steps are strongly inspired by this tutorial:
+https://nullonerror.org/2021/01/08/hosting-telegram-bots-on-google-cloud-run/
+.  This is the resource I first followed to deploy my instance of the
+bot, and it is a really valuable resource. I will show the specific
+steps I took, since I had never worked with Google Cloud before this
+project. Because of that, this tutorial can be a bit basic for
+experienced users. In that case, I recommend you to follow the
+previous link. Thanks to the original author!
