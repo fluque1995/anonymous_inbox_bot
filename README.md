@@ -23,6 +23,31 @@ of the student if it has decided to send an identifiable suggestion.
 
 # Requirements
 
-The bot has been developed using Python 3.8. It should work independently
-of the Python version, as long as it is Python 3. The requirements for
-the project are specified in [`requirements.txt`](requirements.txt)
+The bot has been developed using Python 3.8. It should work
+independently of the Python version, as long as it is Python 3. The
+requirements for the project are specified in
+[`requirements.txt`](requirements.text).  Basically, the libraries
+needed are
+
+- Flask==1.1.2
+- gunicorn==20.0.4
+- python-telegram-bot==13.2
+
+# Deployment on Google Cloud Run
+
+The current state of the bot is prepared to run in Google Cloud Run
+out-of-the-box. However, there are a few steps you have to perform
+in order to make it running. To begin with, you should clone this
+repository in your machine:
+
+``` shell
+git clone https://github.com/fluque1995/anonymous_inbox_bot.git
+```
+
+## Talking to the BotFather
+
+In order to create a new bot, you have to talk to the BotFather.  You
+can start a conversation with him [here](https://t.me/BotFather).
+Creating a new bot using the BotFather is pretty straightforward, you
+can find more information in this link:
+(https://core.telegram.org/bots#6-botfather)
