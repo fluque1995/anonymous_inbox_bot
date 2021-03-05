@@ -105,6 +105,13 @@ using the name of the project and a 6-digit number. For example, if we
 use `telegram-bot` as the name of the project, our project ID will be
 something like `telegram-bot-123456`.
 
+__Note__: It is possible you will have to set up a payment method in
+order to make the project fully operational. Don't worry about that,
+since the number of free requests you can do monthly to the API is
+huge. If you don't plan to use your bot for a whole university or
+campus, you will not be billed. For the moment, the number of free
+petitions per month is 2 million. You can check it in https://cloud.google.com/run/pricing
+
 ## Finally, deploy!
 
 After the project have been created, we are finally ready to deploy
