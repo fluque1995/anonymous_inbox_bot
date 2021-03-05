@@ -1,20 +1,18 @@
-import logging
-import telegram
 import os
+import http
 
-from telegram.ext import (
-    Updater,
-    ConversationHandler,
-    CommandHandler,
-    MessageHandler,
-    Filters
-)
+from flask import Flask, request
+from werkzeug.wrappers import Response
 
+import telegram
+from telegram import Bot, Update
+from telegram.ext import Dispatcher, Filters, MessageHandler, CallbackContext, CommandHandler, ConversationHandler
 
+app = Flask(__name__)
 ANON, ANON_MSG, IDENT_MSG = 1, 2, 3
 
 
-def start(update, context):
+def start(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(
         text=("Bienvenid@! Yo seré tu canal de comunicación secreto con el "
               "profesor. Si tienes alguna sugerencia anónima que hacerle, "
@@ -22,7 +20,7 @@ def start(update, context):
               "utiliza el commando /suggest"))
 
 
-def start_suggestion(update, context):
+def start_suggestion(update: Update, context: CallbackContext) -> int:
     reply_markup = telegram.ReplyKeyboardMarkup(
         [['Anónima'], ['Identificable']])
 
@@ -36,7 +34,7 @@ def start_suggestion(update, context):
     return ANON
 
 
-def record_suggestion(update, context):
+def record_suggestion(update: Update, context: CallbackContext) -> int:
     suggestion_type = update.message.text
     if suggestion_type == 'Anónima':
         msg = ("Tu sugerencia es anónima, no mandaré tu nombre al profesor. "
@@ -52,7 +50,7 @@ def record_suggestion(update, context):
     return next_step
 
 
-def anonymous_suggestion(update, context):
+def anonymous_suggestion(update: Update, context: CallbackContext) -> int:
     msg = update.message.text
     update.message.reply_text(
         ("Genial, mandaré este mensaje al profesor de forma anónima. "
@@ -66,7 +64,7 @@ def anonymous_suggestion(update, context):
     return ConversationHandler.END
 
 
-def identifiable_suggestion(update, context):
+def identifiable_suggestion(update: Update, context: CallbackContext) -> int:
     msg = update.message.text
     update.message.reply_text(
         ("Genial, mandaré este mensaje al profesor en tu nombre. "
@@ -81,7 +79,7 @@ def identifiable_suggestion(update, context):
     return ConversationHandler.END
 
 
-def cancel(update, context):
+def cancel(update: Update, context: CallbackContext) -> int:
     update.message.reply_text(
         ("De acuerdo! No mandaré nada al profesor. Espero que vuelvas a "
          "utilizarme en otro momento!")
@@ -90,29 +88,34 @@ def cancel(update, context):
     return ConversationHandler.END
 
 
-def main():
-    updater = Updater(token=os.environ['BOT_API_TOKEN'],
-                      use_context=True)
+conv_handler = ConversationHandler(
+    entry_points=[CommandHandler('suggest', start_suggestion)],
+    states={
+        ANON: [MessageHandler(Filters.regex('^(Anónima|Identificable)$'),
+                              record_suggestion
+                              )],
+        IDENT_MSG: [MessageHandler(Filters.text & ~Filters.command,
+                                   identifiable_suggestion)],
+        ANON_MSG: [MessageHandler(Filters.text & ~Filters.command,
+                                  anonymous_suggestion)],
+    },
+    fallbacks=[CommandHandler('cancel', cancel)])
 
-    dispatcher = updater.dispatcher
-    logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                        level=logging.INFO)
 
-    conv_handler = ConversationHandler(
-        entry_points=[CommandHandler('suggest', start_suggestion)],
-        states={
-            ANON: [MessageHandler(Filters.regex('^(Anónima|Identificable)$'),
-                                  record_suggestion
-                                  )],
-            IDENT_MSG: [MessageHandler(Filters.text, identifiable_suggestion)],
-            ANON_MSG: [MessageHandler(Filters.text, anonymous_suggestion)],
-        },
-        fallbacks=[CommandHandler('cancel', cancel)])
+bot = Bot(token=os.environ["TOKEN"])
 
-    dispatcher.add_handler(conv_handler)
-    dispatcher.add_handler(CommandHandler('start', start))
-    updater.start_polling()
+dispatcher = Dispatcher(bot=bot, update_queue=None, workers=0)
+dispatcher.add_handler(CommandHandler('start', start))
+dispatcher.add_handler(conv_handler)
+
+
+@app.route("/", methods=["POST"])
+def index() -> Response:
+    dispatcher.process_update(
+        Update.de_json(request.get_json(force=True), bot))
+
+    return "", http.HTTPStatus.NO_CONTENT
 
 
 if __name__ == '__main__':
-    main()
+    app.run()
