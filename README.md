@@ -110,3 +110,27 @@ something like `telegram-bot-123456`.
 After the project have been created, we are finally ready to deploy
 our bot!. We will need the Google Cloud CLI. You can check the installation
 process in https://cloud.google.com/sdk/docs/install .
+
+After installing `gcloud`, navigate to the repository folder in your
+computer (remember, we cloned this repo at the beginning of the
+tutorial). After being in the repository folder, we have to login into
+Google Cloud from our terminal:
+
+``` shell
+gcloud auth login
+```
+
+It will redirect us to a Google login page, where we will have to specify
+our account. After we are logged in, we will have to set our region:
+
+``` shell
+gcloud config set run/region europe-west1
+```
+
+And finally, we have to deploy our bot! The command for deploy is:
+
+``` shell
+gcloud beta run deploy anonymous-box --source . \
+    --set-env-vars TOKEN=<YOUR_API_TOKEN>,TEACHER_CHAT_ID=<YOUR_CHAT_ID> \
+    --platform managed --allow-unauthenticated --project <YOUR_PROJECT_ID>
+```
