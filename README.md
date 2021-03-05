@@ -134,3 +134,13 @@ gcloud beta run deploy anonymous-box --source . \
     --set-env-vars TOKEN=<YOUR_API_TOKEN>,TEACHER_CHAT_ID=<YOUR_CHAT_ID> \
     --platform managed --allow-unauthenticated --project <YOUR_PROJECT_ID>
 ```
+
+After the command has finished, you will receive a public URL of your run,
+and you will need to set up the bot `webHook` using cURL:
+
+``` shell
+curl "https://api.telegram.org/bot<YOUR_API_TOKEN>/setWebhook?url=https://your-bot-name-uuid-uc.a.run.app"
+```
+
+And we are finished! If you encounter any problem when deploying your
+bot, feel free to contact me, or leaving an issue in the repo :)
